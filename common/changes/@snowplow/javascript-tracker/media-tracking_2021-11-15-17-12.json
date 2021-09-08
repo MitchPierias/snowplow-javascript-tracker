@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@snowplow/javascript-tracker",
+      "comment": "JavaScript Tracker HTML5 Media Tracking (#805)",
+      "type": "none"
+    }
+  ],
+  "packageName": "@snowplow/javascript-tracker"
+}
