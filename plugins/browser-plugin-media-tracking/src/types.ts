@@ -6,11 +6,6 @@ export type EventGroup = (DocumentEvent | MediaEvent | SnowplowMediaEvent | Text
 
 export type MediaEventType = DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent;
 
-export type HTMLVideoFormat = 'mp4' | 'ogg' | 'webm';
-
-// All Video formats can be used as Audio as well
-export type HTMLAudioFormat = 'aac' | 'aacp' | 'caf' | 'flac' | 'mp3' | 'wav' | HTMLVideoFormat;
-
 export interface RecievedTrackingOptions {
   boundries?: number[];
   captureEvents?: EventGroup;

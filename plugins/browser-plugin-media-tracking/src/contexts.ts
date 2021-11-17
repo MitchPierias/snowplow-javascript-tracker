@@ -112,7 +112,7 @@ export interface MediaElement {
   /**
    * The media file format
    **/
-  fileExtension: 'aac' | 'aacp' | 'caf' | 'flac' | 'mp3' | 'mp4' | 'ogg' | 'wav' | 'webm';
+  fileExtension: string;
 
   /**
    * If the video element is fullscreen

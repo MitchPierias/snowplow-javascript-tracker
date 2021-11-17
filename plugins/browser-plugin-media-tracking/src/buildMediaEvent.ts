@@ -1,7 +1,7 @@
 import { NETWORK_STATE, READY_STATE } from './constants';
 import { MediaElement, MediaPlayer, MediaPlayerEvent, VideoElement } from './contexts';
 import { dataUrlHandler, isElementFullScreen, textTrackListToJson, timeRangesToObjectArray } from './helperFunctions';
-import { HTMLAudioFormat, HTMLVideoFormat, MediaEntities, MediaEventData, MediaEventType } from './types';
+import { MediaEntities, MediaEventData, MediaEventType } from './types';
 import { MediaProperty, VideoProperty } from './mediaProperties';
 
 export function buildMediaEvent(
@@ -62,7 +62,7 @@ function getHTMLMediaElementEntities(el: HTMLVideoElement | HTMLAudioElement): M
       seeking: el[MediaProperty.SEEKING],
       src: dataUrlHandler(el[MediaProperty.SRC]),
       textTracks: textTrackListToJson(el[MediaProperty.TEXTTRACKS]),
-      fileExtension: el[MediaProperty.CURRENTSRC].split('.').pop() as HTMLVideoFormat & HTMLAudioFormat,
+      fileExtension: el[MediaProperty.CURRENTSRC].split('.').pop() as string,
       fullscreen: isElementFullScreen(el.id),
       pictureInPicture: document.pictureInPictureElement?.id === el.id,
     },
