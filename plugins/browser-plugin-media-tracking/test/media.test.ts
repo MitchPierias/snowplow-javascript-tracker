@@ -30,7 +30,7 @@
 
 import { AllEvents, DefaultEvents } from '../src/eventGroups';
 import { findMediaElem } from '../src/findMediaElement';
-import { boundryErrorHandling, dataUriHandler, trackingOptionsParser } from '../src/helperFunctions';
+import { boundryErrorHandling, dataUrlHandler, trackingOptionsParser } from '../src/helperFunctions';
 import { RecievedTrackingOptions, TrackingOptions } from '../src/types';
 
 describe('config parser', () => {
@@ -171,16 +171,16 @@ describe('element searcher', () => {
   });
 });
 
-describe('dataUriHandler', () => {
+describe('dataUrlHandler', () => {
   it('returns a non-data uri', () => {
     let test_url = 'http://example.com/example.mp4';
-    let output = dataUriHandler(test_url);
+    let output = dataUrlHandler(test_url);
     expect(output).toBe(test_url);
   });
 
   it('returns "DATA_URI" in event of data uri', () => {
     let test_url = 'data:image/png;base64,iVBORw0KGgoAA5ErkJggg==';
-    let output = dataUriHandler(test_url);
+    let output = dataUrlHandler(test_url);
     expect(output).toBe('DATA_URI');
   });
 });

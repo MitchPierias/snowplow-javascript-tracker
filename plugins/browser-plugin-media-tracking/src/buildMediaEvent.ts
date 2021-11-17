@@ -1,6 +1,6 @@
 import { NETWORK_STATE, READY_STATE } from './constants';
 import { MediaElement, MediaPlayer, MediaPlayerEvent, VideoElement } from './contexts';
-import { dataUriHandler, isElementFullScreen, textTrackListToJson, timeRangesToObjectArray } from './helperFunctions';
+import { dataUrlHandler, isElementFullScreen, textTrackListToJson, timeRangesToObjectArray } from './helperFunctions';
 import { HTMLAudioFormat, HTMLVideoFormat, MediaEntities, MediaEventData, MediaEventType } from './types';
 import { MediaProperty, VideoProperty } from './mediaProperties';
 
@@ -60,7 +60,7 @@ function getHTMLMediaElementEntities(el: HTMLVideoElement | HTMLAudioElement): M
       readyState: READY_STATE[el[MediaProperty.READYSTATE]] as MediaElement['readyState'],
       seekable: timeRangesToObjectArray(el[MediaProperty.SEEKABLE]),
       seeking: el[MediaProperty.SEEKING],
-      src: dataUriHandler(el[MediaProperty.SRC]),
+      src: dataUrlHandler(el[MediaProperty.SRC]),
       textTracks: textTrackListToJson(el[MediaProperty.TEXTTRACKS]),
       fileExtension: el[MediaProperty.CURRENTSRC].split('.').pop() as HTMLVideoFormat & HTMLAudioFormat,
       fullscreen: isElementFullScreen(el.id),

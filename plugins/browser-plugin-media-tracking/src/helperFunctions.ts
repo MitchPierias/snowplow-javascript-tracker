@@ -101,7 +101,7 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: Recieve
   return { ...defaults, ...trackingOptions };
 }
 
-export function dataUriHandler(url: string): string {
+export function dataUrlHandler(url: string): string {
   if (url.indexOf('data:') !== -1) {
     return 'DATA_URI';
   }
