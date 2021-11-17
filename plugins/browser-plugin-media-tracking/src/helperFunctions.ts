@@ -51,12 +51,10 @@ export function isElementFullScreen(mediaId: string): boolean {
 export function boundryErrorHandling(boundries: number[]): number[] {
   if (duplicatesInArray(boundries)) {
     boundries = boundries.filter((item, pos, self) => self.indexOf(item) == pos);
-    console.error('Duplicate values found in boundry array');
   }
 
   if (elementsInArrayOutOfBounds(boundries)) {
     boundries = boundries.filter((b) => 0 < b && b < 100);
-    console.error('Boundry array should only contain values 1 - 99');
   }
   return boundries;
 }
