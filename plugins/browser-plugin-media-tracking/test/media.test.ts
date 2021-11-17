@@ -30,7 +30,7 @@
 
 import { AllEvents, DefaultEvents } from '../src/eventGroups';
 import { findMediaElem } from '../src/findMediaElement';
-import { boundryErrorHandling, trackingOptionsParser } from '../src/helperFunctions';
+import { boundryErrorHandling, dataUriHandler, trackingOptionsParser } from '../src/helperFunctions';
 import { RecievedTrackingOptions, TrackingOptions } from '../src/types';
 
 describe('config parser', () => {
@@ -168,5 +168,19 @@ describe('element searcher', () => {
     let output = findMediaElem('parentElem');
     expect(output).toBe(null);
     expect(consoleSpy.mock.calls[0][0]).toEqual('There is more than one child video element in the provided node.');
+  });
+});
+
+describe('dataUriHandler', () => {
+  it('returns a non-data uri', () => {
+    let test_url = 'http://example.com/example.mp4';
+    let output = dataUriHandler(test_url);
+    expect(output).toBe(test_url);
+  });
+
+  it('returns "DATA_URI" in event of data uri', () => {
+    let test_url = 'data:image/png;base64,iVBORw0KGgoAA5ErkJggg==';
+    let output = dataUriHandler(test_url);
+    expect(output).toBe('DATA_URI');
   });
 });
