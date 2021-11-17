@@ -4,7 +4,7 @@ import { SnowplowMediaEvent } from './snowplowEvents';
 import { EventGroup, RecievedTrackingOptions, TextTrackObject, TrackingOptions } from './types';
 
 export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: number }[] {
-  let out = [];
+  const out = [];
   for (let i = 0; i < t.length; i++) {
     out.push({ start: t.start(i), end: t.end(i) });
   }
@@ -12,9 +12,9 @@ export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: nu
 }
 
 export function textTrackListToJson(textTrackList: TextTrackList): TextTrackObject[] {
-  let out: TextTrackObject[] = [];
+  const out: TextTrackObject[] = [];
   for (let o of Object.keys(textTrackList)) {
-    let i = parseInt(o);
+    const i = parseInt(o);
     out.push({
       label: textTrackList[i].label,
       language: textTrackList[i].language,
@@ -26,13 +26,11 @@ export function textTrackListToJson(textTrackList: TextTrackList): TextTrackObje
 }
 
 export function isTypeTextTrackEvent(e: string): boolean {
-  let fields: string[] = Object.keys(TextTrackEvent);
-  return fields.indexOf(e) !== -1;
+  return Object.keys(TextTrackEvent).indexOf(e) !== -1;
 }
 
 export function isTypeDocumentEvent(e: string): boolean {
-  let fields: string[] = Object.keys(DocumentEvent);
-  return fields.indexOf(e) !== -1;
+  return Object.keys(DocumentEvent).indexOf(e) !== -1;
 }
 
 function elementsInArrayOutOfBounds(arr: number[]): boolean {
@@ -64,7 +62,7 @@ export function boundryErrorHandling(boundries: number[]): number[] {
 }
 
 export function trackingOptionsParser(mediaId: string, trackingOptions?: RecievedTrackingOptions): TrackingOptions {
-  let defaults: TrackingOptions = {
+  const defaults: TrackingOptions = {
     mediaId: mediaId,
     captureEvents: DefaultEvents,
     progress: {
