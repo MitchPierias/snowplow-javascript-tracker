@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@snowplow/browser-plugin-media-tracking",
-      "comment": "JavaScript Tracker HTML5 Media Tracking (#805)",
+      "comment": "Add HTML5 Media Tracking plugin (#805)",
       "type": "none"
     }
   ],
