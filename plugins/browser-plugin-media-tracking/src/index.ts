@@ -37,7 +37,7 @@ import { SnowplowMediaEvent } from './snowplowEvents';
 import { DocumentEvent, MediaEvent } from './mediaEvents';
 import { MediaEventType, TrackingOptions, RecievedTrackingOptions, EventGroup, trackedElement } from './types';
 import { BrowserPlugin, BrowserTracker, dispatchToTrackersInCollection } from '@snowplow/browser-tracker-core';
-import { buildSelfDescribingEvent, CommonEventProperties, SelfDescribingJson } from '@snowplow/tracker-core';
+import { buildSelfDescribingEvent, CommonEventProperties, Logger, SelfDescribingJson } from '@snowplow/tracker-core';
 import { MediaPlayerEvent } from './contexts';
 import { findMediaElem } from './findMediaElement';
 import { buildMediaEvent } from './buildMediaEvent';
@@ -57,12 +57,16 @@ declare global {
   }
 }
 
+let LOG: Logger;
 const _trackers: Record<string, BrowserTracker> = {};
 
 export function MediaTrackingPlugin(): BrowserPlugin {
   return {
     activateBrowserPlugin: (tracker: BrowserTracker) => {
       _trackers[tracker.id] = tracker;
+    },
+    logger: (logger) => {
+      LOG = logger;
     },
   };
 }
@@ -107,14 +111,13 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
   let el = findMediaElem(id);
 
   if (!trackedIds[id].searchLimit) {
-    console.error("Couldn't find element before timeout");
+    LOG.error("Couldn't find element before timeout");
     trackedIds[id].searchIntervals.forEach((e: ReturnType<typeof setTimeout>) => clearInterval(e));
     return;
   }
 
   if (!el) {
     trackedIds[id].searchLimit--;
-    console.error(`Couldn't find element with id: '${id}'. Trying again...`);
     return;
   }
 
