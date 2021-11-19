@@ -43,8 +43,8 @@ export interface TextTrackObject {
 }
 
 export interface TrackedElement {
-  searchIntervals: ReturnType<typeof setTimeout>[];
+  timeoutId?: ReturnType<typeof setTimeout>;
+  waitTime: number;
   retryCount: number;
   tracking: boolean;
-  [index: string]: ReturnType<typeof setTimeout>[] | number | boolean;
 }

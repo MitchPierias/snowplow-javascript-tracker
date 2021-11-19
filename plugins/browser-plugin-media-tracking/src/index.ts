@@ -100,9 +100,8 @@ export function enableMediaTracking(args: { id: string; options?: MediaTrackingO
     eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement, e: MediaEventType) => mediaPlayerEvent(el, e, conf);
   }
 
-  trackedIds[args.id] = { searchIntervals: [], retryCount: 5, tracking: false };
+  trackedIds[args.id] = { waitTime: 250, retryCount: 5, tracking: false };
   setUpListeners(args.id, conf, eventHandlers);
-  trackedIds[args.id].searchIntervals.push(setInterval(() => setUpListeners(args.id, conf, eventHandlers), 5000));
 }
 
 function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record<string, Function>) {
@@ -112,16 +111,18 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
 
   if (!trackedIds[id].retryCount) {
     LOG.error("Couldn't find element before timeout");
-    trackedIds[id].searchIntervals.forEach((e: ReturnType<typeof setTimeout>) => clearInterval(e));
     return;
   }
 
   if (!el) {
     trackedIds[id].retryCount--;
+    trackedIds[id].timeoutId = setTimeout(() => setUpListeners(id, conf, eventHandlers), trackedIds[id].waitTime);
+    trackedIds[id].waitTime *= 2;
     return;
   }
 
-  trackedIds[id].searchIntervals.forEach((e: ReturnType<typeof setTimeout>) => clearInterval(e));
+  clearTimeout(trackedIds[id].timeoutId as ReturnType<typeof setTimeout>);
+
   if (!trackedIds[id].tracking) {
     if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== 0) {
       boundryErrorHandling(conf.progress!.boundries);
