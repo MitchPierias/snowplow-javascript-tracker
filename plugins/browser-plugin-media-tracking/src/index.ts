@@ -74,7 +74,7 @@ export function MediaTrackingPlugin(): BrowserPlugin {
 const trackedIds: Record<string, trackedElement> = {};
 
 export function enableMediaTracking(args: { id: string; options?: RecievedTrackingOptions }) {
-  let conf: TrackingOptions = trackingOptionsParser(args.id, args.options);
+  const conf: TrackingOptions = trackingOptionsParser(args.id, args.options);
 
   const eventsWithOtherFunctions: Record<string, Function> = {
     [DocumentEvent.FULLSCREENCHANGE]: (el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) => {
@@ -108,7 +108,7 @@ export function enableMediaTracking(args: { id: string; options?: RecievedTracki
 function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record<string, Function>) {
   // The element may not be loaded in time for this function to run,
   // so we have a few goes at finding the element
-  let el = findMediaElem(id);
+  const el = findMediaElem(id);
 
   if (!trackedIds[id].searchLimit) {
     LOG.error("Couldn't find element before timeout");
@@ -138,7 +138,7 @@ function addCaptureEventListeners(
   eventHandlers: Record<string, Function>
 ): void {
   for (let e of captureEvents) {
-    let ev: EventListener = () => eventHandlers[e](el, e);
+    const ev: EventListener = () => eventHandlers[e](el, e);
     if (isTypeTextTrackEvent(e)) {
       el.textTracks.addEventListener(e, ev);
     } else if (isTypeDocumentEvent(e)) {
@@ -161,7 +161,7 @@ function mediaPlayerEvent(
   conf: TrackingOptions,
   boundry?: number
 ): void {
-  let event = buildMediaEvent(el, e, conf.label, boundry);
+  const event = buildMediaEvent(el, e, conf.label, boundry);
   if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== -1) {
     progressHandler(e, el, conf);
   }
@@ -201,11 +201,11 @@ function progressHandler(e: MediaEventType, el: HTMLAudioElement | HTMLVideoElem
 
 function setPercentageBoundTimeouts(el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
   for (let boundry of conf.progress!.boundries) {
-    let absoluteBoundryTimeMs = el[MediaProperty.DURATION] * (boundry / 100) * 1000;
-    let currentTimeMs = el[MediaProperty.CURRENTTIME] * 1000;
-    let timeUntilBoundryEvent = absoluteBoundryTimeMs - currentTimeMs;
+    const absoluteBoundryTimeMs = el[MediaProperty.DURATION] * (boundry / 100) * 1000;
+    const currentTimeMs = el[MediaProperty.CURRENTTIME] * 1000;
+    const timeUntilBoundryEvent = absoluteBoundryTimeMs - currentTimeMs;
     // If the boundry is less than the current time, we don't need to bother setting it
-    if (timeUntilBoundryEvent > 0) {
+    if (0 < timeUntilBoundryEvent) {
       conf.progress!.boundryTimeoutIds.push(
         setTimeout(
           () => waitAnyRemainingTimeAfterTimeout(el, timeUntilBoundryEvent, boundry, conf),
