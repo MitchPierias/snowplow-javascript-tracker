@@ -42,9 +42,9 @@ export interface TextTrackObject {
   mode: string;
 }
 
-export interface trackedElement {
+export interface TrackedElement {
   searchIntervals: ReturnType<typeof setTimeout>[];
-  searchLimit: number;
+  retryCount: number;
   tracking: boolean;
   [index: string]: ReturnType<typeof setTimeout>[] | number | boolean;
 }

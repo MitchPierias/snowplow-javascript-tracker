@@ -35,7 +35,7 @@ import {
 } from './helperFunctions';
 import { SnowplowMediaEvent } from './snowplowEvents';
 import { DocumentEvent, MediaEvent } from './mediaEvents';
-import { MediaEventType, TrackingOptions, MediaTrackingOptions, EventGroup, trackedElement } from './types';
+import { MediaEventType, TrackingOptions, MediaTrackingOptions, EventGroup, TrackedElement } from './types';
 import { BrowserPlugin, BrowserTracker, dispatchToTrackersInCollection } from '@snowplow/browser-tracker-core';
 import { buildSelfDescribingEvent, CommonEventProperties, Logger, SelfDescribingJson } from '@snowplow/tracker-core';
 import { MediaPlayerEvent } from './contexts';
@@ -71,7 +71,7 @@ export function MediaTrackingPlugin(): BrowserPlugin {
   };
 }
 
-const trackedIds: Record<string, trackedElement> = {};
+const trackedIds: Record<string, TrackedElement> = {};
 
 export function enableMediaTracking(args: { id: string; options?: MediaTrackingOptions }) {
   const conf: TrackingOptions = trackingOptionsParser(args.id, args.options);
@@ -100,7 +100,7 @@ export function enableMediaTracking(args: { id: string; options?: MediaTrackingO
     eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement, e: MediaEventType) => mediaPlayerEvent(el, e, conf);
   }
 
-  trackedIds[args.id] = { searchIntervals: [], searchLimit: 5, tracking: false };
+  trackedIds[args.id] = { searchIntervals: [], retryCount: 5, tracking: false };
   setUpListeners(args.id, conf, eventHandlers);
   trackedIds[args.id].searchIntervals.push(setInterval(() => setUpListeners(args.id, conf, eventHandlers), 5000));
 }
@@ -110,14 +110,14 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
   // so we have a few goes at finding the element
   const el = findMediaElem(id);
 
-  if (!trackedIds[id].searchLimit) {
+  if (!trackedIds[id].retryCount) {
     LOG.error("Couldn't find element before timeout");
     trackedIds[id].searchIntervals.forEach((e: ReturnType<typeof setTimeout>) => clearInterval(e));
     return;
   }
 
   if (!el) {
-    trackedIds[id].searchLimit--;
+    trackedIds[id].retryCount--;
     return;
   }
 
