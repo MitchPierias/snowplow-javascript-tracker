@@ -35,7 +35,7 @@ import {
 } from './helperFunctions';
 import { SnowplowMediaEvent } from './snowplowEvents';
 import { DocumentEvent, MediaEvent } from './mediaEvents';
-import { MediaEventType, TrackingOptions, RecievedTrackingOptions, EventGroup, trackedElement } from './types';
+import { MediaEventType, TrackingOptions, MediaTrackingOptions, EventGroup, trackedElement } from './types';
 import { BrowserPlugin, BrowserTracker, dispatchToTrackersInCollection } from '@snowplow/browser-tracker-core';
 import { buildSelfDescribingEvent, CommonEventProperties, Logger, SelfDescribingJson } from '@snowplow/tracker-core';
 import { MediaPlayerEvent } from './contexts';
@@ -73,7 +73,7 @@ export function MediaTrackingPlugin(): BrowserPlugin {
 
 const trackedIds: Record<string, trackedElement> = {};
 
-export function enableMediaTracking(args: { id: string; options?: RecievedTrackingOptions }) {
+export function enableMediaTracking(args: { id: string; options?: MediaTrackingOptions }) {
   const conf: TrackingOptions = trackingOptionsParser(args.id, args.options);
 
   const eventsWithOtherFunctions: Record<string, Function> = {

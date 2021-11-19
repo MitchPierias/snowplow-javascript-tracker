@@ -6,7 +6,7 @@ export type EventGroup = (DocumentEvent | MediaEvent | SnowplowMediaEvent | Text
 
 export type MediaEventType = DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent;
 
-export interface RecievedTrackingOptions {
+export interface MediaTrackingOptions {
   boundries?: number[];
   captureEvents?: EventGroup;
   label?: string;

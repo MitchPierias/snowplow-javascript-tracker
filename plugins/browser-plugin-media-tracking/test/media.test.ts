@@ -31,7 +31,7 @@
 import { AllEvents, DefaultEvents } from '../src/eventGroups';
 import { findMediaElem } from '../src/findMediaElement';
 import { boundryErrorHandling, dataUrlHandler, trackingOptionsParser } from '../src/helperFunctions';
-import { RecievedTrackingOptions, TrackingOptions } from '../src/types';
+import { MediaTrackingOptions, TrackingOptions } from '../src/types';
 
 describe('config parser', () => {
   const id = 'html5';
@@ -51,7 +51,7 @@ describe('config parser', () => {
   });
 
   it('parses boundries', () => {
-    let trackingOptions: RecievedTrackingOptions = {
+    let trackingOptions: MediaTrackingOptions = {
       captureEvents: DefaultEvents,
       boundries: [1, 4, 7, 9, 99],
     };
@@ -60,7 +60,7 @@ describe('config parser', () => {
   });
 
   it('parses mediaLabel', () => {
-    let trackingOptions: RecievedTrackingOptions = {
+    let trackingOptions: MediaTrackingOptions = {
       label: 'test-label',
     };
     let expected_output = 'test-label';
@@ -68,7 +68,7 @@ describe('config parser', () => {
   });
 
   it('parses capture events', () => {
-    let trackingOptions: RecievedTrackingOptions = {
+    let trackingOptions: MediaTrackingOptions = {
       captureEvents: ['play', 'pause'],
     };
     let expected_output = ['play', 'pause'];
@@ -76,7 +76,7 @@ describe('config parser', () => {
   });
 
   it('parses capture event groups', () => {
-    let trackingOptions: RecievedTrackingOptions = {
+    let trackingOptions: MediaTrackingOptions = {
       captureEvents: ['AllEvents'],
     };
     let expected_output = AllEvents;
@@ -84,7 +84,7 @@ describe('config parser', () => {
   });
 
   it('parses capture events and groups in same array', () => {
-    let trackingOptions: RecievedTrackingOptions = {
+    let trackingOptions: MediaTrackingOptions = {
       captureEvents: ['DefaultEvents', 'resize'],
     };
     let expected_output = DefaultEvents.concat(['resize']);

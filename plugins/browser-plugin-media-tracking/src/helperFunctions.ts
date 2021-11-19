@@ -1,7 +1,7 @@
 import { DefaultEvents, EventGroups } from './eventGroups';
 import { DocumentEvent, MediaEvent, TextTrackEvent } from './mediaEvents';
 import { SnowplowMediaEvent } from './snowplowEvents';
-import { EventGroup, RecievedTrackingOptions, TextTrackObject, TrackingOptions } from './types';
+import { EventGroup, MediaTrackingOptions, TextTrackObject, TrackingOptions } from './types';
 
 export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: number }[] {
   const out = [];
@@ -59,7 +59,7 @@ export function boundryErrorHandling(boundries: number[]): number[] {
   return boundries;
 }
 
-export function trackingOptionsParser(mediaId: string, trackingOptions?: RecievedTrackingOptions): TrackingOptions {
+export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTrackingOptions): TrackingOptions {
   const defaults: TrackingOptions = {
     mediaId: mediaId,
     captureEvents: DefaultEvents,
