@@ -93,42 +93,28 @@ describe('config parser', () => {
 });
 
 describe('boundry error handling', () => {
-  let consoleSpy: jest.SpyInstance;
-
-  beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    consoleSpy.mockRestore();
-  });
-
   it("doesn't modify an acceptable boundry array", () => {
     let boundries = [1, 50, 99];
     let result = boundryErrorHandling(boundries);
     expect(result).toEqual(boundries);
   });
 
-  it('logs an error and removes values outside 1-99', () => {
+  it('removes values outside 1-99', () => {
     let boundries = [0, 50, 100];
     let result = boundryErrorHandling(boundries);
     expect(result).toEqual([50]);
-    expect(consoleSpy.mock.calls[0][0]).toEqual('Boundry array should only contain values 1 - 99');
   });
 
-  it('logs an error and removes duplicates', () => {
+  it('removes duplicates', () => {
     let boundries = [10, 10, 50, 90, 90];
     let result = boundryErrorHandling(boundries);
     expect(result).toEqual([10, 50, 90]);
-    expect(consoleSpy.mock.calls[0][0]).toEqual('Duplicate values found in boundry array');
   });
 
-  it('logs appropriate errors, removes values outside 1-99 and removes duplicates', () => {
+  it('removes values outside 1-99 and removes duplicates', () => {
     let boundries = [0, 0, 1, 1, 50, 100, 100];
     let result = boundryErrorHandling(boundries);
     expect(result).toEqual([1, 50]);
-    expect(consoleSpy.mock.calls[0][0]).toEqual('Duplicate values found in boundry array');
-    expect(consoleSpy.mock.calls[1][0]).toEqual('Boundry array should only contain values 1 - 99');
   });
 });
 
