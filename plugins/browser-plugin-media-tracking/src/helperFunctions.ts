@@ -48,15 +48,15 @@ export function isElementFullScreen(mediaId: string): boolean {
   return false;
 }
 
-export function boundryErrorHandling(boundries: number[]): number[] {
-  if (duplicatesInArray(boundries)) {
-    boundries = boundries.filter((item, pos, self) => self.indexOf(item) == pos);
+export function boundaryErrorHandling(boundaries: number[]): number[] {
+  if (duplicatesInArray(boundaries)) {
+    boundaries = boundaries.filter((item, pos, self) => self.indexOf(item) == pos);
   }
 
-  if (elementsInArrayOutOfBounds(boundries)) {
-    boundries = boundries.filter((b) => 0 < b && b < 100);
+  if (elementsInArrayOutOfBounds(boundaries)) {
+    boundaries = boundaries.filter((b) => 0 < b && b < 100);
   }
-  return boundries;
+  return boundaries;
 }
 
 export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTrackingOptions): TrackingOptions {
@@ -64,8 +64,8 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
     mediaId: mediaId,
     captureEvents: DefaultEvents,
     progress: {
-      boundries: [10, 25, 50, 75],
-      boundryTimeoutIds: [],
+      boundaries: [10, 25, 50, 75],
+      boundaryTimeoutIds: [],
     },
     volume: {
       trackingInterval: 250,
@@ -90,8 +90,8 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
     trackingOptions.captureEvents = parsedEvents;
     if (trackingOptions.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== -1) {
       defaults.progress = {
-        boundries: trackingOptions?.boundries || defaults.progress!.boundries,
-        boundryTimeoutIds: [],
+        boundaries: trackingOptions?.boundaries || defaults.progress!.boundaries,
+        boundaryTimeoutIds: [],
       };
     }
 

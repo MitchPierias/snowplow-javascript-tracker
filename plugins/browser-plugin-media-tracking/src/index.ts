@@ -30,7 +30,7 @@
 import {
   isTypeTextTrackEvent,
   isTypeDocumentEvent,
-  boundryErrorHandling,
+  boundaryErrorHandling,
   trackingOptionsParser,
 } from './helperFunctions';
 import { SnowplowMediaEvent } from './snowplowEvents';
@@ -85,8 +85,8 @@ export function enableMediaTracking(args: { id: string; options?: MediaTrackingO
     },
     [MediaEvent.SEEKED]: (el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) => {
       if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== 0) {
-        while (conf.progress!.boundryTimeoutIds.length) {
-          clearTimeout(Number(conf.progress!.boundryTimeoutIds.pop()));
+        while (conf.progress!.boundaryTimeoutIds.length) {
+          clearTimeout(Number(conf.progress!.boundaryTimeoutIds.pop()));
         }
         setPercentageBoundTimeouts(el, conf);
       }
@@ -126,7 +126,7 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
 
   if (!trackedIds[id].tracking) {
     if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== 0) {
-      boundryErrorHandling(conf.progress!.boundries);
+      boundaryErrorHandling(conf.progress!.boundaries);
       setPercentageBoundTimeouts(result.el, conf);
     }
     addCaptureEventListeners(result.el, conf.captureEvents, eventHandlers);
@@ -161,9 +161,9 @@ function mediaPlayerEvent(
   el: HTMLAudioElement | HTMLVideoElement,
   e: MediaEventType,
   conf: TrackingOptions,
-  boundry?: number
+  boundary?: number
 ): void {
-  const event = buildMediaEvent(el, e, conf.label, boundry);
+  const event = buildMediaEvent(el, e, conf.label, boundary);
   if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== -1) {
     progressHandler(e, el, conf);
   }
@@ -191,8 +191,8 @@ function trackMediaEvent(
 
 function progressHandler(e: MediaEventType, el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
   if (e === MediaEvent.PAUSE) {
-    while (conf.progress!.boundryTimeoutIds.length) {
-      clearTimeout(Number(conf.progress!.boundryTimeoutIds.pop()));
+    while (conf.progress!.boundaryTimeoutIds.length) {
+      clearTimeout(Number(conf.progress!.boundaryTimeoutIds.pop()));
     }
   }
 
@@ -202,16 +202,16 @@ function progressHandler(e: MediaEventType, el: HTMLAudioElement | HTMLVideoElem
 }
 
 function setPercentageBoundTimeouts(el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
-  for (let boundry of conf.progress!.boundries) {
-    const absoluteBoundryTimeMs = el[MediaProperty.DURATION] * (boundry / 100) * 1000;
+  for (let boundary of conf.progress!.boundaries) {
+    const absoluteBoundaryTimeMs = el[MediaProperty.DURATION] * (boundary / 100) * 1000;
     const currentTimeMs = el[MediaProperty.CURRENTTIME] * 1000;
-    const timeUntilBoundryEvent = absoluteBoundryTimeMs - currentTimeMs;
-    // If the boundry is less than the current time, we don't need to bother setting it
-    if (0 < timeUntilBoundryEvent) {
-      conf.progress!.boundryTimeoutIds.push(
+    const timeUntilBoundaryEvent = absoluteBoundaryTimeMs - currentTimeMs;
+    // If the boundary is less than the current time, we don't need to bother setting it
+    if (0 < timeUntilBoundaryEvent) {
+      conf.progress!.boundaryTimeoutIds.push(
         setTimeout(
-          () => waitAnyRemainingTimeAfterTimeout(el, timeUntilBoundryEvent, boundry, conf),
-          timeUntilBoundryEvent
+          () => waitAnyRemainingTimeAfterTimeout(el, timeUntilBoundaryEvent, boundary, conf),
+          timeUntilBoundaryEvent
         )
       );
     }
@@ -223,13 +223,13 @@ function setPercentageBoundTimeouts(el: HTMLAudioElement | HTMLVideoElement, con
 
 function waitAnyRemainingTimeAfterTimeout(
   el: HTMLAudioElement | HTMLVideoElement,
-  boundryTime: number,
-  boundry: number,
+  boundaryTime: number,
+  boundary: number,
   conf: TrackingOptions
 ) {
-  if (el[MediaProperty.CURRENTTIME] * 1000 < boundryTime) {
-    setTimeout(() => waitAnyRemainingTimeAfterTimeout(el, boundryTime, boundry, conf), 10);
+  if (el[MediaProperty.CURRENTTIME] * 1000 < boundaryTime) {
+    setTimeout(() => waitAnyRemainingTimeAfterTimeout(el, boundaryTime, boundary, conf), 10);
   } else {
-    mediaPlayerEvent(el, SnowplowMediaEvent.PERCENTPROGRESS, conf, boundry);
+    mediaPlayerEvent(el, SnowplowMediaEvent.PERCENTPROGRESS, conf, boundary);
   }
 }

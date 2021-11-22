@@ -7,7 +7,7 @@ export type EventGroup = (DocumentEvent | MediaEvent | SnowplowMediaEvent | Text
 export type MediaEventType = DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent;
 
 export interface MediaTrackingOptions {
-  boundries?: number[];
+  boundaries?: number[];
   captureEvents?: EventGroup;
   label?: string;
   volumeChangeTrackingInterval?: number;
@@ -18,8 +18,8 @@ export interface TrackingOptions {
   captureEvents: EventGroup;
   label?: string;
   progress?: {
-    boundries: number[];
-    boundryTimeoutIds: ReturnType<typeof setTimeout>[];
+    boundaries: number[];
+    boundaryTimeoutIds: ReturnType<typeof setTimeout>[];
   };
   volume?: {
     eventTimeoutId?: ReturnType<typeof setTimeout>;

@@ -8,9 +8,9 @@ export function buildMediaEvent(
   el: HTMLVideoElement | HTMLAudioElement,
   e: MediaEventType,
   label?: string,
-  boundry?: number
+  boundary?: number
 ): MediaEventData {
-  let mediaContext = [getHTMLMediaElementEntities(el), getMediaPlayerEntities(el, boundry)];
+  let mediaContext = [getHTMLMediaElementEntities(el), getMediaPlayerEntities(el, boundary)];
   if (el instanceof HTMLVideoElement) mediaContext.push(getHTMLVideoElementEntities(el));
   let data: MediaPlayerEvent = { type: e };
   if (label) data.label = label;
@@ -22,7 +22,7 @@ export function buildMediaEvent(
   };
 }
 
-function getMediaPlayerEntities(el: HTMLVideoElement | HTMLAudioElement, boundry?: number): MediaEntities {
+function getMediaPlayerEntities(el: HTMLVideoElement | HTMLAudioElement, boundary?: number): MediaEntities {
   let data: MediaPlayer = {
     currentTime: el[MediaProperty.CURRENTTIME],
     duration: el[MediaProperty.DURATION],
@@ -33,7 +33,7 @@ function getMediaPlayerEntities(el: HTMLVideoElement | HTMLAudioElement, boundry
     playbackRate: el[MediaProperty.PLAYBACKRATE],
     volume: parseInt(String(el[MediaProperty.VOLUME] * 100)),
   };
-  if (boundry) data.percentProgress = boundry;
+  if (boundary) data.percentProgress = boundary;
   return {
     schema: 'iglu:com.snowplowanalytics.snowplow/media_player/jsonschema/1-0-0',
     data: data,

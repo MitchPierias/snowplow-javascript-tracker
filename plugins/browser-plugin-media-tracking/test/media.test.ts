@@ -30,7 +30,7 @@
 
 import { AllEvents, DefaultEvents } from '../src/eventGroups';
 import { findMediaElem } from '../src/findMediaElement';
-import { boundryErrorHandling, dataUrlHandler, trackingOptionsParser } from '../src/helperFunctions';
+import { boundaryErrorHandling, dataUrlHandler, trackingOptionsParser } from '../src/helperFunctions';
 import { MediaTrackingOptions, TrackingOptions } from '../src/types';
 
 describe('config parser', () => {
@@ -40,8 +40,8 @@ describe('config parser', () => {
     mediaId: 'html5',
     captureEvents: DefaultEvents,
     progress: {
-      boundries: [10, 25, 50, 75],
-      boundryTimeoutIds: [],
+      boundaries: [10, 25, 50, 75],
+      boundaryTimeoutIds: [],
     },
     volume: {
       trackingInterval: 250,
@@ -57,10 +57,10 @@ describe('config parser', () => {
   it('parses boundries', () => {
     let trackingOptions: MediaTrackingOptions = {
       captureEvents: DefaultEvents,
-      boundries: [1, 4, 7, 9, 99],
+      boundaries: [1, 4, 7, 9, 99],
     };
     let expected_output = [1, 4, 7, 9, 99];
-    expect(trackingOptionsParser(id, trackingOptions).progress?.boundries).toEqual(expected_output);
+    expect(trackingOptionsParser(id, trackingOptions).progress?.boundaries).toEqual(expected_output);
   });
 
   it('parses mediaLabel', () => {
@@ -107,25 +107,25 @@ describe('config parser', () => {
 describe('boundry error handling', () => {
   it("doesn't modify an acceptable boundry array", () => {
     let boundries = [1, 50, 99];
-    let result = boundryErrorHandling(boundries);
+    let result = boundaryErrorHandling(boundries);
     expect(result).toEqual(boundries);
   });
 
   it('removes values outside 1-99', () => {
     let boundries = [0, 50, 100];
-    let result = boundryErrorHandling(boundries);
+    let result = boundaryErrorHandling(boundries);
     expect(result).toEqual([50]);
   });
 
   it('removes duplicates', () => {
     let boundries = [10, 10, 50, 90, 90];
-    let result = boundryErrorHandling(boundries);
+    let result = boundaryErrorHandling(boundries);
     expect(result).toEqual([10, 50, 90]);
   });
 
   it('removes values outside 1-99 and removes duplicates', () => {
     let boundries = [0, 0, 1, 1, 50, 100, 100];
-    let result = boundryErrorHandling(boundries);
+    let result = boundaryErrorHandling(boundries);
     expect(result).toEqual([1, 50]);
   });
 });
