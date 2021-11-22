@@ -99,7 +99,7 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
 
 export function dataUrlHandler(url: string): string {
   if (url.indexOf('data:') !== -1) {
-    return 'DATA_URI';
+    return 'DATA_URL';
   }
   return url;
 }

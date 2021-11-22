@@ -168,9 +168,9 @@ describe('dataUrlHandler', () => {
     expect(output).toBe(test_url);
   });
 
-  it('returns "DATA_URI" in event of data uri', () => {
+  it('returns "DATA_URL" in event of data uri', () => {
     let test_url = 'data:image/png;base64,iVBORw0KGgoAA5ErkJggg==';
     let output = dataUrlHandler(test_url);
-    expect(output).toBe('DATA_URI');
+    expect(output).toBe('DATA_URL');
   });
 });
