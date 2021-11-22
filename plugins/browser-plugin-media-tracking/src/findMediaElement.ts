@@ -10,7 +10,7 @@ export function findMediaElem(mediaId: string): SearchResult {
   if (isVideoElement(el)) {
     // Plyr loads in an initial blank video with currentSrc as https://cdn.plyr.io/static/blank.mp4
     // so we need to check until currentSrc updates
-    if (el.src === 'https://cdn.plyr.io/static/blank.mp4' || !el.src) {
+    if (el.currentSrc === 'https://cdn.plyr.io/static/blank.mp4' || !el.currentSrc) {
       return { err: SEARCH_ERROR.PLYR_CURRENTSRC };
     }
     return { el: el };
