@@ -42,6 +42,7 @@ import { MediaPlayerEvent } from './contexts';
 import { findMediaElem } from './findMediaElement';
 import { buildMediaEvent } from './buildMediaEvent';
 import { MediaProperty } from './mediaProperties';
+import { SEARCH_ERROR } from './constants';
 
 declare global {
   interface HTMLVideoElement {
@@ -110,7 +111,7 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
   const result = findMediaElem(id);
 
   if (!trackedIds[id].retryCount) {
-    LOG.error(result.error || 'Could not find media element');
+    LOG.error(result.error || SEARCH_ERROR.NOT_FOUND);
     return;
   }
 
