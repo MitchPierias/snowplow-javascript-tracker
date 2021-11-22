@@ -51,7 +51,7 @@ const makeExpectedEvent = (eventType: string, mediaPlayerSchemaExpected?: MediaP
           buffered: [{ start: 0, end: jasmine.any(Number) }],
           controls: true,
           crossOrigin: null,
-          currentSource: 'http://snowplow-js-tracker.local:8080/test-video.mp4',
+          currentSrc: 'http://snowplow-js-tracker.local:8080/test-video.mp4',
           defaultMuted: true,
           defaultPlaybackRate: 1,
           disableRemotePlayback: false,
