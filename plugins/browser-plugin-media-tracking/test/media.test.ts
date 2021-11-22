@@ -132,28 +132,32 @@ describe('element searcher', () => {
   it('finds a video with id', () => {
     document.body.innerHTML = '<div><video id="videoElem" src="test.mp4"</video></div>';
     let output = findMediaElem('videoElem');
-    expect(output?.tagName).toBe('VIDEO');
-    expect(output?.id).toBe('videoElem');
+    expect(output.el?.tagName).toBe('VIDEO');
+    expect(output.el?.id).toBe('videoElem');
+  });
+
+  it("returns error if the element doesn't have the id", () => {
+    document.body.innerHTML = '<div><video src="test.mp4"</video></div>';
+    let output = findMediaElem('videoElem');
+    expect(output).toStrictEqual({ err: 'Media element not found' });
   });
 
   it('finds a child video element in parent with id', () => {
     document.body.innerHTML = '<div id="parentElem"><video></video></div>';
     let output = findMediaElem('parentElem');
-    expect(output?.tagName).toBe('VIDEO');
+    expect(output.el?.tagName).toBe('VIDEO');
   });
 
-  it('logs an error and returns null if multiple child audio elements exist in a parent', () => {
+  it('returns an error if multiple child audio elements exist in a parent', () => {
     document.body.innerHTML = '<div id="parentElem"><audio></audio><audio></audio></div>';
     let output = findMediaElem('parentElem');
-    expect(output).toBe(null);
-    expect(consoleSpy.mock.calls[0][0]).toEqual('There is more than one child audio element in the provided node.');
+    expect(output).toStrictEqual({ err: 'More than one media element in the provided node' });
   });
 
-  it('logs an error and returns null if multiple child video elements exist in a parent', () => {
+  it('returns an error if multiple child video elements exist in a parent', () => {
     document.body.innerHTML = '<div id="parentElem"><video></video><video></video></div>';
     let output = findMediaElem('parentElem');
-    expect(output).toBe(null);
-    expect(consoleSpy.mock.calls[0][0]).toEqual('There is more than one child video element in the provided node.');
+    expect(output).toStrictEqual({ err: 'More than one media element in the provided node' });
   });
 });
 

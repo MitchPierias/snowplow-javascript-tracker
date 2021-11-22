@@ -107,14 +107,14 @@ export function enableMediaTracking(args: { id: string; options?: MediaTrackingO
 function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record<string, Function>) {
   // The element may not be loaded in time for this function to run,
   // so we have a few goes at finding the element
-  const el = findMediaElem(id);
+  const result = findMediaElem(id);
 
   if (!trackedIds[id].retryCount) {
-    LOG.error("Couldn't find element before timeout");
+    LOG.error(result.error || 'Could not find media element');
     return;
   }
 
-  if (!el) {
+  if (!result.el) {
     trackedIds[id].retryCount--;
     trackedIds[id].timeoutId = setTimeout(() => setUpListeners(id, conf, eventHandlers), trackedIds[id].waitTime);
     trackedIds[id].waitTime *= 2;
@@ -126,9 +126,9 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
   if (!trackedIds[id].tracking) {
     if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== 0) {
       boundryErrorHandling(conf.progress!.boundries);
-      setPercentageBoundTimeouts(el, conf);
+      setPercentageBoundTimeouts(result.el, conf);
     }
-    addCaptureEventListeners(el, conf.captureEvents, eventHandlers);
+    addCaptureEventListeners(result.el, conf.captureEvents, eventHandlers);
     trackedIds[id].tracking = true;
   }
 }

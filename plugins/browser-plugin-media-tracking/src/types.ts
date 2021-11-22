@@ -48,3 +48,15 @@ export interface TrackedElement {
   retryCount: number;
   tracking: boolean;
 }
+
+export interface SearchResult {
+  el?: HTMLAudioElement | HTMLVideoElement;
+  err?: string;
+  [key: string]: any;
+}
+
+export interface SearchError {
+  NOT_FOUND: string;
+  MULTIPLE_ELEMENTS: string;
+  PLYR_CURRENTSRC: string;
+}

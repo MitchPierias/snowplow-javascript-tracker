@@ -1,38 +1,41 @@
-export function findMediaElem(mediaId: string): HTMLAudioElement | HTMLVideoElement | null {
+import { SEARCH_ERROR, TAG } from './constants';
+import { SearchResult } from './types';
+
+export function findMediaElem(mediaId: string): SearchResult {
   let el: HTMLVideoElement | HTMLAudioElement | HTMLElement | null = document.getElementById(mediaId);
 
-  if (el instanceof HTMLVideoElement) {
+  if (!el) return { err: SEARCH_ERROR.NOT_FOUND };
+  if (isAudioElement(el)) return { el: el };
+
+  if (isVideoElement(el)) {
     // Plyr loads in an initial blank video with currentSrc as https://cdn.plyr.io/static/blank.mp4
     // so we need to check until currentSrc updates
     if (el.src === 'https://cdn.plyr.io/static/blank.mp4' || !el.src) {
-      return null;
+      return { err: SEARCH_ERROR.PLYR_CURRENTSRC };
     }
-    return el as HTMLVideoElement;
+    return { el: el };
   }
 
-  if (el && el.tagName !== 'AUDIO' && el.tagName !== 'VIDEO') {
-    el = findMediaElementChild(el);
-  }
-
-  if (el) {
-    if (el.tagName === 'AUDIO') return el as HTMLAudioElement;
-    if (el.tagName === 'VIDEO') return el as HTMLVideoElement;
-  }
-
-  return null;
+  return findMediaElementChild(el);
 }
 
-function findMediaElementChild(el: Element): HTMLAudioElement | HTMLVideoElement | null {
-  let tags: string[] = ['AUDIO', 'VIDEO'];
-
-  for (let tag of tags) {
+function findMediaElementChild(el: Element): SearchResult {
+  for (let tag of Object.keys(TAG)) {
     let elem = el.getElementsByTagName(tag);
     if (elem.length === 1) {
-      if (tag === 'AUDIO') return elem[0] as HTMLAudioElement;
-      if (tag === 'VIDEO') return elem[0] as HTMLVideoElement;
+      if (isAudioElement(elem[0])) return { el: elem[0] };
+      if (isVideoElement(elem[0])) return { el: elem[0] };
     } else if (elem.length > 1) {
-      console.error(`There is more than one child ${tag.toLowerCase()} element in the provided node.`);
+      return { err: SEARCH_ERROR.MULTIPLE_ELEMENTS };
     }
   }
-  return null;
+  return { err: SEARCH_ERROR.NOT_FOUND };
+}
+
+function isAudioElement(el: Element): el is HTMLAudioElement {
+  return el.tagName === TAG.AUDIO;
+}
+
+function isVideoElement(el: Element): el is HTMLVideoElement {
+  return el.tagName === TAG.VIDEO;
 }
