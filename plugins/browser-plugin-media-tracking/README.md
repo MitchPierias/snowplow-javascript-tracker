@@ -44,12 +44,13 @@ Then, use the `enableMediaTracking` function described below to produce events f
 enableMediaTracking({ id, options?: { label?, captureEvents?, percentBoundries? } })
 ```
 
-| Parameter       | Type       | Default             | Description                                               | Required |
-| --------------- | ---------- | ------------------- | --------------------------------------------------------- | -------- |
-| `id`            | `string`   | -                   | The HTML id attribute of the media element                | Yes      |
-| `label`         | `string`   | -                   | An identifiable custom label sent with the event          | No       |
-| `captureEvents` | `string[]` | `['DefaultEvents']` | The name(s) of the events to capture                      | No       |
-| `boundries`     | `number[]` | `[10, 25, 50, 75]`  | The progress percentages to fire an event at (if enabled) | No       |
+| Parameter                      | Type       | Default             | Description                                               | Required |
+| ------------------------------ | ---------- | ------------------- | --------------------------------------------------------- | -------- |
+| `id`                           | `string`   | -                   | The HTML id attribute of the media element                | Yes      |
+| `label`                        | `string`   | -                   | An identifiable custom label sent with the event          | No       |
+| `captureEvents`                | `string[]` | `['DefaultEvents']` | The name(s) of the events to capture                      | No       |
+| `boundries`                    | `number[]` | `[10, 25, 50, 75]`  | The progress percentages to fire an event at (if enabled) | No       |
+| `volumeChangeTrackingInterval` | `number`   | `250`               | The rate at which volume events can be sent               | No       |
 
 ## Example Usage
 

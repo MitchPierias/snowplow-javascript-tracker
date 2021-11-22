@@ -67,6 +67,9 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
       boundries: [10, 25, 50, 75],
       boundryTimeoutIds: [],
     },
+    volume: {
+      trackingInterval: 250,
+    },
   };
 
   if (!trackingOptions) return defaults;
@@ -77,23 +80,29 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
       // If an event is an EventGroup, get the events from that group
       if (EventGroups.hasOwnProperty(ev)) {
         parsedEvents = parsedEvents.concat(EventGroups[ev]);
-        // Log an error if the event isn't valid
-        //} else if (!Object.keys(MediaEvent).filter((k) => k === ev)) {
       } else if (!Object.keys(MediaEvent).filter((k) => k === ev)) {
-        console.error(`'${ev}' is not a valid captureEvent.`);
+        console.warn(`'${ev}' is not a valid event.`);
       } else {
         parsedEvents.push(ev);
       }
     }
+
     trackingOptions.captureEvents = parsedEvents;
     if (trackingOptions.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== -1) {
       defaults.progress = {
-        boundries: trackingOptions?.boundries || [10, 25, 50, 75],
+        boundries: trackingOptions?.boundries || defaults.progress!.boundries,
         boundryTimeoutIds: [],
       };
     }
-  }
 
+    if (trackingOptions.captureEvents.indexOf(MediaEvent.VOLUMECHANGE) !== -1) {
+      defaults.volume = {
+        trackingInterval: trackingOptions?.volumeChangeTrackingInterval || defaults.volume!.trackingInterval,
+      };
+    }
+  }
+  let test = { ...defaults, ...trackingOptions };
+  console.log(test);
   return { ...defaults, ...trackingOptions };
 }
 

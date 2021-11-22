@@ -10,7 +10,7 @@ export interface MediaTrackingOptions {
   boundries?: number[];
   captureEvents?: EventGroup;
   label?: string;
-  boundryTimeoutIds?: ReturnType<typeof setTimeout>[];
+  volumeChangeTrackingInterval?: number;
 }
 
 export interface TrackingOptions {
@@ -21,7 +21,10 @@ export interface TrackingOptions {
     boundries: number[];
     boundryTimeoutIds: ReturnType<typeof setTimeout>[];
   };
-  volumeChangeTimeout?: ReturnType<typeof setTimeout>;
+  volume?: {
+    eventTimeoutId?: ReturnType<typeof setTimeout>;
+    trackingInterval: number;
+  };
 }
 
 export interface MediaEventData {

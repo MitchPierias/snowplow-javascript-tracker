@@ -43,10 +43,14 @@ describe('config parser', () => {
       boundries: [10, 25, 50, 75],
       boundryTimeoutIds: [],
     },
+    volume: {
+      trackingInterval: 250,
+    },
   };
 
   it('assigns defaults', () => {
     let test = trackingOptionsParser(id);
+    console.log(test);
     expect(test).toEqual(default_output);
   });
 
@@ -89,6 +93,14 @@ describe('config parser', () => {
     };
     let expected_output = DefaultEvents.concat(['resize']);
     expect(trackingOptionsParser(id, trackingOptions).captureEvents).toEqual(expected_output);
+  });
+
+  it('parses volume timeout', () => {
+    let trackingOptions: MediaTrackingOptions = {
+      captureEvents: ['volumechange'],
+      volumeChangeTrackingInterval: 1000,
+    };
+    expect(trackingOptionsParser(id, trackingOptions).volume?.trackingInterval).toEqual(1000);
   });
 });
 

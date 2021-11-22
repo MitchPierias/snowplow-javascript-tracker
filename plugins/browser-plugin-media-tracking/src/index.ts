@@ -170,9 +170,9 @@ function mediaPlayerEvent(
 
   // Dragging the volume scrubber will generate a lot of events, this limits the rate at which
   // volume events can be sent at
-  if (e === MediaEvent.VOLUMECHANGE) {
-    clearTimeout(Number(conf.volumeChangeTimeout));
-    conf.volumeChangeTimeout = setTimeout(() => trackMediaEvent(event), 200);
+  if (e === MediaEvent.VOLUMECHANGE && conf.volume) {
+    clearTimeout(Number(conf.volume.eventTimeoutId));
+    conf.volume.eventTimeoutId! = setTimeout(() => trackMediaEvent(event), conf.volume.trackingInterval);
   } else {
     trackMediaEvent(event);
   }
