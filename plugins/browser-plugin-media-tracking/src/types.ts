@@ -52,7 +52,6 @@ export interface TrackedElement {
 export interface SearchResult {
   el?: HTMLAudioElement | HTMLVideoElement;
   err?: string;
-  [key: string]: any;
 }
 
 export interface SearchError {

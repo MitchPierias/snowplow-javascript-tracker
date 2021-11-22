@@ -111,7 +111,7 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
   const result = findMediaElem(id);
 
   if (!trackedIds[id].retryCount) {
-    LOG.error(result.error || SEARCH_ERROR.NOT_FOUND);
+    LOG.error(result.err || SEARCH_ERROR.NOT_FOUND);
     return;
   }
 
