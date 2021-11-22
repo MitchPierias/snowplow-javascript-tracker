@@ -50,7 +50,7 @@ function getHTMLMediaElementEntities(el: HTMLVideoElement | HTMLAudioElement): M
       buffered: timeRangesToObjectArray(el[MediaProperty.BUFFERED]),
       controls: el[MediaProperty.CONTROLS],
       crossOrigin: el[MediaProperty.CROSSORIGIN],
-      currentSource: el[MediaProperty.CURRENTSRC],
+      currentSrc: el[MediaProperty.CURRENTSRC],
       defaultMuted: el[MediaProperty.DEFAULTMUTED],
       defaultPlaybackRate: el[MediaProperty.DEFAULTPLAYBACKRATE],
       disableRemotePlayback: el[MediaProperty.DISABLEREMOTEPLAYBACK],

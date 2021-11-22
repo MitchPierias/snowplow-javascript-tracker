@@ -87,7 +87,7 @@ export interface MediaElement {
   /**
    * The absolute URL of the media resource
    **/
-  currentSource: string;
+  currentSrc: string;
 
   /**
    * If audio is muted by default
