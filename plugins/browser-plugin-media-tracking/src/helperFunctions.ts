@@ -1,4 +1,4 @@
-import { DefaultEvents, EventGroups } from './eventGroups';
+import { AllEvents, DefaultEvents, EventGroups } from './eventGroups';
 import { DocumentEvent, MediaEvent, TextTrackEvent } from './mediaEvents';
 import { SnowplowMediaEvent } from './snowplowEvents';
 import { EventGroup, MediaTrackingOptions, TextTrackObject, TrackingOptions } from './types';
@@ -80,7 +80,7 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
       // If an event is an EventGroup, get the events from that group
       if (EventGroups.hasOwnProperty(ev)) {
         parsedEvents = parsedEvents.concat(EventGroups[ev]);
-      } else if (!Object.keys(MediaEvent).filter((k) => k === ev)) {
+      } else if (!Object.keys(AllEvents).filter((k) => k === ev)) {
         console.warn(`'${ev}' is not a valid event.`);
       } else {
         parsedEvents.push(ev);
@@ -101,8 +101,6 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
       };
     }
   }
-  let test = { ...defaults, ...trackingOptions };
-  console.log(test);
   return { ...defaults, ...trackingOptions };
 }
 
