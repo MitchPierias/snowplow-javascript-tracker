@@ -49,54 +49,53 @@ describe('config parser', () => {
   };
 
   it('assigns defaults', () => {
-    let test = trackingOptionsParser(id);
-    console.log(test);
+    const test = trackingOptionsParser(id);
     expect(test).toEqual(default_output);
   });
 
   it('parses boundries', () => {
-    let trackingOptions: MediaTrackingOptions = {
+    const trackingOptions: MediaTrackingOptions = {
       captureEvents: DefaultEvents,
       boundaries: [1, 4, 7, 9, 99],
     };
-    let expected_output = [1, 4, 7, 9, 99];
+    const expected_output = [1, 4, 7, 9, 99];
     expect(trackingOptionsParser(id, trackingOptions).progress?.boundaries).toEqual(expected_output);
   });
 
   it('parses mediaLabel', () => {
-    let trackingOptions: MediaTrackingOptions = {
+    const trackingOptions: MediaTrackingOptions = {
       label: 'test-label',
     };
-    let expected_output = 'test-label';
+    const expected_output = 'test-label';
     expect(trackingOptionsParser(id, trackingOptions).label).toEqual(expected_output);
   });
 
   it('parses capture events', () => {
-    let trackingOptions: MediaTrackingOptions = {
+    const trackingOptions: MediaTrackingOptions = {
       captureEvents: ['play', 'pause'],
     };
-    let expected_output = ['play', 'pause'];
+    const expected_output = ['play', 'pause'];
     expect(trackingOptionsParser(id, trackingOptions).captureEvents).toEqual(expected_output);
   });
 
   it('parses capture event groups', () => {
-    let trackingOptions: MediaTrackingOptions = {
+    const trackingOptions: MediaTrackingOptions = {
       captureEvents: ['AllEvents'],
     };
-    let expected_output = AllEvents;
+    const expected_output = AllEvents;
     expect(trackingOptionsParser(id, trackingOptions).captureEvents).toEqual(expected_output);
   });
 
   it('parses capture events and groups in same array', () => {
-    let trackingOptions: MediaTrackingOptions = {
+    const trackingOptions: MediaTrackingOptions = {
       captureEvents: ['DefaultEvents', 'resize'],
     };
-    let expected_output = DefaultEvents.concat(['resize']);
+    const expected_output = DefaultEvents.concat(['resize']);
     expect(trackingOptionsParser(id, trackingOptions).captureEvents).toEqual(expected_output);
   });
 
   it('parses volume timeout', () => {
-    let trackingOptions: MediaTrackingOptions = {
+    const trackingOptions: MediaTrackingOptions = {
       captureEvents: ['volumechange'],
       volumeChangeTrackingInterval: 1000,
     };
@@ -106,26 +105,26 @@ describe('config parser', () => {
 
 describe('boundry error handling', () => {
   it("doesn't modify an acceptable boundry array", () => {
-    let boundries = [1, 50, 99];
-    let result = boundaryErrorHandling(boundries);
+    const boundries = [1, 50, 99];
+    const result = boundaryErrorHandling(boundries);
     expect(result).toEqual(boundries);
   });
 
   it('removes values outside 1-99', () => {
-    let boundries = [0, 50, 100];
-    let result = boundaryErrorHandling(boundries);
+    const boundries = [0, 50, 100];
+    const result = boundaryErrorHandling(boundries);
     expect(result).toEqual([50]);
   });
 
   it('removes duplicates', () => {
-    let boundries = [10, 10, 50, 90, 90];
-    let result = boundaryErrorHandling(boundries);
+    const boundries = [10, 10, 50, 90, 90];
+    const result = boundaryErrorHandling(boundries);
     expect(result).toEqual([10, 50, 90]);
   });
 
   it('removes values outside 1-99 and removes duplicates', () => {
-    let boundries = [0, 0, 1, 1, 50, 100, 100];
-    let result = boundaryErrorHandling(boundries);
+    const boundries = [0, 0, 1, 1, 50, 100, 100];
+    const result = boundaryErrorHandling(boundries);
     expect(result).toEqual([1, 50]);
   });
 });
@@ -143,46 +142,46 @@ describe('element searcher', () => {
 
   it('finds a video with id', () => {
     document.body.innerHTML = '<div><video id="videoElem" src="test.mp4"</video></div>';
-    let output = findMediaElem('videoElem');
+    const output = findMediaElem('videoElem');
     expect(output.el?.tagName).toBe('VIDEO');
     expect(output.el?.id).toBe('videoElem');
   });
 
   it("returns error if the element doesn't have the id", () => {
     document.body.innerHTML = '<div><video src="test.mp4"</video></div>';
-    let output = findMediaElem('videoElem');
+    const output = findMediaElem('videoElem');
     expect(output).toStrictEqual({ err: 'Media element not found' });
   });
 
   it('finds a child video element in parent with id', () => {
     document.body.innerHTML = '<div id="parentElem"><video></video></div>';
-    let output = findMediaElem('parentElem');
+    const output = findMediaElem('parentElem');
     expect(output.el?.tagName).toBe('VIDEO');
   });
 
   it('returns an error if multiple child audio elements exist in a parent', () => {
     document.body.innerHTML = '<div id="parentElem"><audio></audio><audio></audio></div>';
-    let output = findMediaElem('parentElem');
+    const output = findMediaElem('parentElem');
     expect(output).toStrictEqual({ err: 'More than one media element in the provided node' });
   });
 
   it('returns an error if multiple child video elements exist in a parent', () => {
     document.body.innerHTML = '<div id="parentElem"><video></video><video></video></div>';
-    let output = findMediaElem('parentElem');
+    const output = findMediaElem('parentElem');
     expect(output).toStrictEqual({ err: 'More than one media element in the provided node' });
   });
 });
 
 describe('dataUrlHandler', () => {
   it('returns a non-data uri', () => {
-    let test_url = 'http://example.com/example.mp4';
-    let output = dataUrlHandler(test_url);
+    const test_url = 'http://example.com/example.mp4';
+    const output = dataUrlHandler(test_url);
     expect(output).toBe(test_url);
   });
 
   it('returns "DATA_URL" in event of data uri', () => {
-    let test_url = 'data:image/png;base64,iVBORw0KGgoAA5ErkJggg==';
-    let output = dataUrlHandler(test_url);
+    const test_url = 'data:image/png;base64,iVBORw0KGgoAA5ErkJggg==';
+    const output = dataUrlHandler(test_url);
     expect(output).toBe('DATA_URL');
   });
 });
