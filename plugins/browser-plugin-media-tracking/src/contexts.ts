@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TextTrackObject } from './types';
+import { TextTrack } from './types';
 
 interface TimeRange {
   start: number;
@@ -172,7 +172,7 @@ export interface MediaElement {
   /**
    * An array of TextTrack objects on the media element
    **/
-  textTracks?: TextTrackObject[];
+  textTracks?: TextTrack[];
   [key: string]: unknown;
 }
 

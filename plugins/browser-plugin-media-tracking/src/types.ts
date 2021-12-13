@@ -2,9 +2,9 @@ import { MediaElement, MediaPlayer, MediaPlayerEvent, VideoElement } from './con
 import { SnowplowMediaEvent } from './snowplowEvents';
 import { MediaEvent, TextTrackEvent, DocumentEvent, VideoEvent } from './mediaEvents';
 
-export type EventGroup = (DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent | string)[];
+export type Event = DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent;
 
-export type MediaEventType = DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent;
+export type EventGroup = (Event | string)[];
 
 export interface MediaTrackingOptions {
   boundaries?: number[];
@@ -38,7 +38,7 @@ export interface MediaEntities {
   data: MediaElement | VideoElement | MediaPlayer;
 }
 
-export interface TextTrackObject {
+export interface TextTrack {
   label: string;
   language: string;
   kind: string;

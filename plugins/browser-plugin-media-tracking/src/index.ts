@@ -35,7 +35,7 @@ import {
 } from './helperFunctions';
 import { SnowplowMediaEvent } from './snowplowEvents';
 import { DocumentEvent, MediaEvent } from './mediaEvents';
-import { MediaEventType, TrackingOptions, MediaTrackingOptions, EventGroup, TrackedElement } from './types';
+import { Event, TrackingOptions, MediaTrackingOptions, EventGroup, TrackedElement } from './types';
 import { BrowserPlugin, BrowserTracker, dispatchToTrackersInCollection } from '@snowplow/browser-tracker-core';
 import { buildSelfDescribingEvent, CommonEventProperties, Logger, SelfDescribingJson } from '@snowplow/tracker-core';
 import { MediaPlayerEvent } from './contexts';
@@ -98,7 +98,7 @@ export function enableMediaTracking(args: { id: string; options?: MediaTrackingO
     if (eventsWithOtherFunctions.hasOwnProperty(ev)) {
       eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement) => eventsWithOtherFunctions[ev](el);
     }
-    eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement, e: MediaEventType) => mediaPlayerEvent(el, e, conf);
+    eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement, e: Event) => mediaPlayerEvent(el, e, conf);
   }
 
   trackedIds[args.id] = { waitTime: 250, retryCount: 5, tracking: false };
@@ -159,7 +159,7 @@ function addCaptureEventListeners(
 
 function mediaPlayerEvent(
   el: HTMLAudioElement | HTMLVideoElement,
-  e: MediaEventType,
+  e: Event,
   conf: TrackingOptions,
   boundary?: number
 ): void {
@@ -189,7 +189,7 @@ function trackMediaEvent(
 
 // Progress Tracking
 
-function progressHandler(e: MediaEventType, el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
+function progressHandler(e: Event, el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
   if (e === MediaEvent.PAUSE) {
     while (conf.progress!.boundaryTimeoutIds.length) {
       clearTimeout(Number(conf.progress!.boundaryTimeoutIds.pop()));

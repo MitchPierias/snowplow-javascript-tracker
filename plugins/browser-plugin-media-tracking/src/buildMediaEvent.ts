@@ -1,12 +1,12 @@
 import { NETWORK_STATE, READY_STATE } from './constants';
 import { MediaElement, MediaPlayer, MediaPlayerEvent, VideoElement } from './contexts';
 import { dataUrlHandler, isElementFullScreen, textTrackListToJson, timeRangesToObjectArray } from './helperFunctions';
-import { MediaEntities, MediaEventData, MediaEventType } from './types';
+import { MediaEntities, MediaEventData, Event } from './types';
 import { MediaProperty, VideoProperty } from './mediaProperties';
 
 export function buildMediaEvent(
   el: HTMLVideoElement | HTMLAudioElement,
-  e: MediaEventType,
+  e: Event,
   label?: string,
   boundary?: number
 ): MediaEventData {

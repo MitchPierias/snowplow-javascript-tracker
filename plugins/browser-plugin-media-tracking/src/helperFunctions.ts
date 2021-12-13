@@ -1,7 +1,7 @@
 import { AllEvents, DefaultEvents, EventGroups } from './eventGroups';
 import { DocumentEvent, MediaEvent, TextTrackEvent } from './mediaEvents';
 import { SnowplowMediaEvent } from './snowplowEvents';
-import { EventGroup, MediaTrackingOptions, TextTrackObject, TrackingOptions } from './types';
+import { EventGroup, MediaTrackingOptions, TextTrack, TrackingOptions } from './types';
 
 export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: number }[] {
   const out = [];
@@ -11,8 +11,8 @@ export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: nu
   return out;
 }
 
-export function textTrackListToJson(textTrackList: TextTrackList): TextTrackObject[] {
-  const out: TextTrackObject[] = [];
+export function textTrackListToJson(textTrackList: TextTrackList): TextTrack[] {
+  const out: TextTrack[] = [];
   for (let o of Object.keys(textTrackList)) {
     const i = parseInt(o);
     out.push({
