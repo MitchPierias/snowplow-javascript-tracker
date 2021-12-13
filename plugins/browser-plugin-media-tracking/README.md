@@ -41,7 +41,7 @@ newTracker('sp2', '{{collector}}', { plugins: [ MediaTrackingPlugin() ] }); // A
 Then, use the `enableMediaTracking` function described below to produce events from your HTML5 Video/Audio element(s).
 
 ```js
-enableMediaTracking({ id, options?: { label?, captureEvents?, percentBoundries? } })
+enableMediaTracking({ id, options?: { label?, captureEvents?, boundaries?, volumeChangeTrackingInterval? } })
 ```
 
 | Parameter                      | Type       | Default             | Description                                               | Required |
@@ -70,7 +70,7 @@ enableMediaTracking({
   options: {
     label: "My Custom Video Label",
     captureEvents: ["pause", "volumechange", "percentprogress"],
-    boundries: [10, 25, 50, 75],
+    boundaries: [10, 25, 50, 75],
   }
 })
 ```
