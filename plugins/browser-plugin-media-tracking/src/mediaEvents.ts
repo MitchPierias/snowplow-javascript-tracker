@@ -34,7 +34,7 @@ export enum VideoEvent {
 
 // https://developer.mozilla.org/en-US/docs/Web/API/TextTrack#events
 export enum TextTrackEvent {
-  CHANGE = 'change',
+  CUECHANGE = 'cuechange',
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Document/fullscreenchange_event
