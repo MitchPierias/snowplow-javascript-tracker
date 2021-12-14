@@ -1,10 +1,14 @@
 import { MediaElement, MediaPlayer, MediaPlayerEvent, VideoElement } from './contexts';
-import { SnowplowMediaEvent } from './snowplowEvents';
-import { MediaEvent, TextTrackEvent, DocumentEvent, VideoEvent } from './mediaEvents';
+import { MediaEvent, TextTrackEvent, DocumentEvent, VideoEvent, SnowplowEvent } from './mediaEvents';
 
-export type Event = DocumentEvent | MediaEvent | SnowplowMediaEvent | TextTrackEvent | VideoEvent;
+export type PlayerEvent =
+  | keyof typeof MediaEvent
+  | keyof typeof TextTrackEvent
+  | keyof typeof DocumentEvent
+  | keyof typeof VideoEvent
+  | keyof typeof SnowplowEvent;
 
-export type EventGroup = (Event | string)[];
+export type EventGroup = (PlayerEvent | string)[];
 
 export interface MediaTrackingOptions {
   boundaries?: number[];
@@ -14,7 +18,7 @@ export interface MediaTrackingOptions {
 }
 
 export interface TrackingOptions {
-  mediaId: string;
+  id: string;
   captureEvents: EventGroup;
   label?: string;
   progress?: {

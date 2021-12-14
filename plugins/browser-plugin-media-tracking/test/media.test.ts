@@ -37,7 +37,7 @@ describe('config parser', () => {
   const id = 'html5';
 
   const default_output: TrackingOptions = {
-    mediaId: 'html5',
+    id: 'html5',
     captureEvents: DefaultEvents,
     progress: {
       boundaries: [10, 25, 50, 75],

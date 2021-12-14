@@ -1,6 +1,5 @@
 import { AllEvents, DefaultEvents, EventGroups } from './eventGroups';
-import { DocumentEvent, MediaEvent, TextTrackEvent } from './mediaEvents';
-import { SnowplowMediaEvent } from './snowplowEvents';
+import { MediaEvent, SnowplowEvent } from './mediaEvents';
 import { EventGroup, MediaTrackingOptions, TextTrack, TrackingOptions } from './types';
 
 export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: number }[] {
@@ -12,56 +11,42 @@ export function timeRangesToObjectArray(t: TimeRanges): { start: number; end: nu
 }
 
 export function textTrackListToJson(textTrackList: TextTrackList): TextTrack[] {
-  const out: TextTrack[] = [];
-  for (let o of Object.keys(textTrackList)) {
-    const i = parseInt(o);
-    out.push({
+  return Object.keys(textTrackList).map((_, i) => {
+    return {
       label: textTrackList[i].label,
       language: textTrackList[i].language,
       kind: textTrackList[i].kind,
       mode: textTrackList[i].mode,
-    });
-  }
-  return out;
+    };
+  });
 }
 
-export function isTypeTextTrackEvent(e: string): boolean {
-  return Object.keys(TextTrackEvent).indexOf(e) !== -1;
+export function isType(e: string, _type: Object): boolean {
+  return Object.keys(_type).indexOf(e) !== -1;
 }
 
-export function isTypeDocumentEvent(e: string): boolean {
-  return Object.keys(DocumentEvent).indexOf(e) !== -1;
-}
-
-function elementsInArrayOutOfBounds(arr: number[]): boolean {
-  return arr.filter((a) => a < 1 || 100 < a).length !== 0;
-}
-
-function duplicatesInArray(arr: number[]): boolean {
-  return arr.filter((b) => arr.filter((f) => f == b).length > 1).length !== 0;
-}
-
-export function isElementFullScreen(mediaId: string): boolean {
+export function isElementFullScreen(id: string): boolean {
   if (document.fullscreenElement) {
-    return document.fullscreenElement.id === mediaId;
+    return document.fullscreenElement.id === id;
   }
   return false;
 }
 
 export function boundaryErrorHandling(boundaries: number[]): number[] {
-  if (duplicatesInArray(boundaries)) {
-    boundaries = boundaries.filter((item, pos, self) => self.indexOf(item) == pos);
-  }
-
-  if (elementsInArrayOutOfBounds(boundaries)) {
+  // Remove any elements that are out of bounds
+  if (boundaries.some((b) => b < 1 || 100 < b)) {
     boundaries = boundaries.filter((b) => 0 < b && b < 100);
+  }
+  // Remove any duplicate elements
+  if (boundaries.some((b, _, self) => self.filter((f) => f == b).length > 1)) {
+    boundaries = boundaries.filter((item, pos, self) => self.indexOf(item) == pos);
   }
   return boundaries;
 }
 
-export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTrackingOptions): TrackingOptions {
+export function trackingOptionsParser(id: string, trackingOptions?: MediaTrackingOptions): TrackingOptions {
   const defaults: TrackingOptions = {
-    mediaId: mediaId,
+    id: id,
     captureEvents: DefaultEvents,
     progress: {
       boundaries: [10, 25, 50, 75],
@@ -76,7 +61,7 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
 
   if (trackingOptions?.captureEvents) {
     let parsedEvents: string[] | EventGroup = [];
-    for (let ev of trackingOptions.captureEvents) {
+    trackingOptions.captureEvents.forEach((ev) => {
       // If an event is an EventGroup, get the events from that group
       if (EventGroups.hasOwnProperty(ev)) {
         parsedEvents = parsedEvents.concat(EventGroups[ev]);
@@ -85,10 +70,10 @@ export function trackingOptionsParser(mediaId: string, trackingOptions?: MediaTr
       } else {
         parsedEvents.push(ev);
       }
-    }
+    });
 
     trackingOptions.captureEvents = parsedEvents;
-    if (trackingOptions.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== -1) {
+    if (trackingOptions.captureEvents.indexOf(SnowplowEvent.PERCENTPROGRESS) !== -1) {
       defaults.progress = {
         boundaries: trackingOptions?.boundaries || defaults.progress!.boundaries,
         boundaryTimeoutIds: [],

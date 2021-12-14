@@ -27,21 +27,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {
-  isTypeTextTrackEvent,
-  isTypeDocumentEvent,
-  boundaryErrorHandling,
-  trackingOptionsParser,
-} from './helperFunctions';
-import { SnowplowMediaEvent } from './snowplowEvents';
-import { DocumentEvent, MediaEvent } from './mediaEvents';
-import { Event, TrackingOptions, MediaTrackingOptions, EventGroup, TrackedElement } from './types';
+import { isType, boundaryErrorHandling, trackingOptionsParser } from './helperFunctions';
+import { DocumentEvent, MediaEvent, SnowplowEvent, TextTrackEvent } from './mediaEvents';
+import { TrackingOptions, MediaTrackingOptions, TrackedElement } from './types';
 import { BrowserPlugin, BrowserTracker, dispatchToTrackersInCollection } from '@snowplow/browser-tracker-core';
 import { buildSelfDescribingEvent, CommonEventProperties, Logger, SelfDescribingJson } from '@snowplow/tracker-core';
 import { MediaPlayerEvent } from './contexts';
 import { findMediaElem } from './findMediaElement';
 import { buildMediaEvent } from './buildMediaEvent';
-import { MediaProperty } from './mediaProperties';
 import { SEARCH_ERROR } from './constants';
 
 declare global {
@@ -76,30 +69,29 @@ const trackedIds: Record<string, TrackedElement> = {};
 
 export function enableMediaTracking(args: { id: string; options?: MediaTrackingOptions }) {
   const conf: TrackingOptions = trackingOptionsParser(args.id, args.options);
-
   const eventsWithOtherFunctions: Record<string, Function> = {
-    [DocumentEvent.FULLSCREENCHANGE]: (el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) => {
+    [DocumentEvent.FULLSCREENCHANGE]: (e: Event, conf: TrackingOptions) => {
       if (document.fullscreenElement?.id === args.id) {
-        mediaPlayerEvent(el, DocumentEvent.FULLSCREENCHANGE, conf);
+        mediaPlayerEvent(e, conf);
       }
     },
-    [MediaEvent.SEEKED]: (el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) => {
-      if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== 0) {
+    [MediaEvent.SEEKED]: (e: Event, conf: TrackingOptions) => {
+      if (conf.captureEvents.indexOf(SnowplowEvent.PERCENTPROGRESS) !== 0) {
         while (conf.progress!.boundaryTimeoutIds.length) {
-          clearTimeout(Number(conf.progress!.boundaryTimeoutIds.pop()));
+          clearTimeout(conf.progress!.boundaryTimeoutIds.pop() as ReturnType<typeof setTimeout>);
         }
-        setPercentageBoundTimeouts(el, conf);
+        setPercentageBoundTimeouts(e.target as HTMLAudioElement | HTMLVideoElement, conf);
       }
     },
   };
 
   const eventHandlers: Record<string, Function> = {};
-  for (let ev of conf.captureEvents) {
+  conf.captureEvents.forEach((ev) => {
     if (eventsWithOtherFunctions.hasOwnProperty(ev)) {
-      eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement) => eventsWithOtherFunctions[ev](el);
+      eventHandlers[ev] = (e: Event, conf: TrackingOptions) => eventsWithOtherFunctions[ev](e, conf);
     }
-    eventHandlers[ev] = (el: HTMLAudioElement | HTMLVideoElement, e: Event) => mediaPlayerEvent(el, e, conf);
-  }
+    eventHandlers[ev] = (e: Event, conf: TrackingOptions) => mediaPlayerEvent(e, conf);
+  });
 
   trackedIds[args.id] = { waitTime: 250, retryCount: 5, tracking: false };
   setUpListeners(args.id, conf, eventHandlers);
@@ -125,53 +117,48 @@ function setUpListeners(id: string, conf: TrackingOptions, eventHandlers: Record
   clearTimeout(trackedIds[id].timeoutId as ReturnType<typeof setTimeout>);
 
   if (!trackedIds[id].tracking) {
-    if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== 0) {
+    if (conf.captureEvents.indexOf(SnowplowEvent.PERCENTPROGRESS) !== 0) {
       boundaryErrorHandling(conf.progress!.boundaries);
       setPercentageBoundTimeouts(result.el, conf);
     }
-    addCaptureEventListeners(result.el, conf.captureEvents, eventHandlers);
+    addCaptureEventListeners(result.el, conf, eventHandlers);
     trackedIds[id].tracking = true;
   }
 }
 
 function addCaptureEventListeners(
   el: HTMLAudioElement | HTMLVideoElement,
-  captureEvents: EventGroup,
+  conf: TrackingOptions,
   eventHandlers: Record<string, Function>
 ): void {
-  for (let e of captureEvents) {
-    const ev: EventListener = () => eventHandlers[e](el, e);
-    if (isTypeTextTrackEvent(e)) {
-      el.textTracks.addEventListener(e, ev);
-    } else if (isTypeDocumentEvent(e)) {
-      document.addEventListener(e, ev);
+  conf.captureEvents.forEach((c) => {
+    const ev: EventListener = (e: Event) => eventHandlers[c](e, conf);
+    if (isType(c, TextTrackEvent)) {
+      el.textTracks.addEventListener(c, ev);
+    } else if (isType(c, DocumentEvent)) {
+      document.addEventListener(c, ev);
       // Chrome and Safari both use the 'webkit' prefix for the 'fullscreenchange' event
       // IE uses 'MS'
-      if (e === DocumentEvent.FULLSCREENCHANGE) {
-        document.addEventListener('webkit' + e, ev);
-        document.addEventListener('MS' + e, ev);
+      if (c === DocumentEvent.FULLSCREENCHANGE) {
+        document.addEventListener('webkit' + c, ev);
+        document.addEventListener('MS' + c, ev);
       }
     } else {
-      el.addEventListener(e, ev);
+      el.addEventListener(c, ev);
     }
-  }
+  });
 }
 
-function mediaPlayerEvent(
-  el: HTMLAudioElement | HTMLVideoElement,
-  e: Event,
-  conf: TrackingOptions,
-  boundary?: number
-): void {
-  const event = buildMediaEvent(el, e, conf.label, boundary);
-  if (conf.captureEvents.indexOf(SnowplowMediaEvent.PERCENTPROGRESS) !== -1) {
-    progressHandler(e, el, conf);
+function mediaPlayerEvent(e: Event, conf: TrackingOptions): void {
+  const event = buildMediaEvent(e, conf);
+  if (conf.captureEvents.indexOf(SnowplowEvent.PERCENTPROGRESS) !== -1) {
+    progressHandler(e, conf);
   }
 
   // Dragging the volume scrubber will generate a lot of events, this limits the rate at which
   // volume events can be sent at
-  if (e === MediaEvent.VOLUMECHANGE && conf.volume) {
-    clearTimeout(Number(conf.volume.eventTimeoutId));
+  if (e.type === MediaEvent.VOLUMECHANGE && conf.volume) {
+    clearTimeout(conf.volume.eventTimeoutId as ReturnType<typeof setTimeout>);
     conf.volume.eventTimeoutId! = setTimeout(() => trackMediaEvent(event), conf.volume.trackingInterval);
   } else {
     trackMediaEvent(event);
@@ -189,23 +176,22 @@ function trackMediaEvent(
 
 // Progress Tracking
 
-function progressHandler(e: Event, el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
-  if (e === MediaEvent.PAUSE) {
+function progressHandler(e: Event, conf: TrackingOptions) {
+  if (e.type === MediaEvent.PAUSE) {
     while (conf.progress!.boundaryTimeoutIds.length) {
-      clearTimeout(Number(conf.progress!.boundaryTimeoutIds.pop()));
+      clearTimeout(conf.progress!.boundaryTimeoutIds.pop() as ReturnType<typeof setTimeout>);
     }
   }
 
-  if (e === MediaEvent.PLAY && el[MediaProperty.READYSTATE] > 0) {
-    setPercentageBoundTimeouts(el, conf);
+  if (e.type === MediaEvent.PLAY && (e.target as HTMLAudioElement | HTMLVideoElement).readyState > 0) {
+    setPercentageBoundTimeouts(e.target as HTMLAudioElement | HTMLVideoElement, conf);
   }
 }
 
 function setPercentageBoundTimeouts(el: HTMLAudioElement | HTMLVideoElement, conf: TrackingOptions) {
-  for (let boundary of conf.progress!.boundaries) {
-    const absoluteBoundaryTimeMs = el[MediaProperty.DURATION] * (boundary / 100) * 1000;
-    const currentTimeMs = el[MediaProperty.CURRENTTIME] * 1000;
-    const timeUntilBoundaryEvent = absoluteBoundaryTimeMs - currentTimeMs;
+  conf.progress!.boundaries.forEach((boundary) => {
+    const absoluteBoundaryTimeMs = el.duration * (boundary / 100) * 1000;
+    const timeUntilBoundaryEvent = absoluteBoundaryTimeMs - el.currentTime * 1000;
     // If the boundary is less than the current time, we don't need to bother setting it
     if (0 < timeUntilBoundaryEvent) {
       conf.progress!.boundaryTimeoutIds.push(
@@ -215,7 +201,7 @@ function setPercentageBoundTimeouts(el: HTMLAudioElement | HTMLVideoElement, con
         )
       );
     }
-  }
+  });
 }
 
 // The timeout in setPercentageBoundTimeouts fires ~100 - 300ms early
@@ -223,13 +209,16 @@ function setPercentageBoundTimeouts(el: HTMLAudioElement | HTMLVideoElement, con
 
 function waitAnyRemainingTimeAfterTimeout(
   el: HTMLAudioElement | HTMLVideoElement,
-  boundaryTime: number,
+  timeUntilBoundaryEvent: number,
   boundary: number,
   conf: TrackingOptions
 ) {
-  if (el[MediaProperty.CURRENTTIME] * 1000 < boundaryTime) {
-    setTimeout(() => waitAnyRemainingTimeAfterTimeout(el, boundaryTime, boundary, conf), 10);
+  if (el.currentTime * 1000 < timeUntilBoundaryEvent) {
+    setTimeout(() => waitAnyRemainingTimeAfterTimeout(el, timeUntilBoundaryEvent, boundary, conf), 10);
   } else {
-    mediaPlayerEvent(el, SnowplowMediaEvent.PERCENTPROGRESS, conf, boundary);
+    // CustomEvent isn't supported in IE
+    const evt = document.createEvent('CustomEvent');
+    evt.initCustomEvent(SnowplowEvent.PERCENTPROGRESS, false, false, boundary);
+    el.dispatchEvent(evt);
   }
 }

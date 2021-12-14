@@ -1,8 +1,8 @@
 import { SEARCH_ERROR, TAG } from './constants';
 import { SearchResult } from './types';
 
-export function findMediaElem(mediaId: string): SearchResult {
-  let el: HTMLVideoElement | HTMLAudioElement | HTMLElement | null = document.getElementById(mediaId);
+export function findMediaElem(id: string): SearchResult {
+  let el: HTMLVideoElement | HTMLAudioElement | HTMLElement | null = document.getElementById(id);
 
   if (!el) return { err: SEARCH_ERROR.NOT_FOUND };
   if (isAudioElement(el)) return { el: el };
