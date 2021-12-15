@@ -121,13 +121,16 @@ describe('Media Tracker', () => {
     return results[results.length - 1];
   };
 
-  if (browser.capabilities.browserName === 'internet explorer') {
-    it.only('Skip IE9', () => true);
+  if (
+    browser.capabilities.browserName === 'internet explorer' &&
+    (browser.capabilities.version === '9' || browser.capabilities.browserVersion === '10')
+  ) {
+    fit('Skip IE 9 and 10', () => true);
     return;
   }
 
   if (browser.capabilities.browserName === 'safari' && browser.capabilities.version === '8.0') {
-    it.only('Skip Safari 8', () => true);
+    fit('Skip Safari 8', () => true);
     return;
   }
 
@@ -234,16 +237,6 @@ describe('Media Tracker', () => {
 });
 
 describe('Media Tracker (2 videos, 1 tracker)', () => {
-  if (browser.capabilities.browserName === 'internet explorer') {
-    it.only('Skip IE9', () => true);
-    return;
-  }
-
-  if (browser.capabilities.browserName === 'safari' && browser.capabilities.version === '8.0') {
-    it.only('Skip Safari 8', () => true);
-    return;
-  }
-
   beforeAll(() => {
     browser.url('/media/tracking-2-players.html');
 
@@ -307,16 +300,6 @@ describe('Media Tracker (2 videos, 1 tracker)', () => {
 });
 
 describe('Media Tracker (1 video, 2 trackers)', () => {
-  if (browser.capabilities.browserName === 'internet explorer') {
-    it.only('Skip IE9', () => true);
-    return;
-  }
-
-  if (browser.capabilities.browserName === 'safari' && browser.capabilities.version === '8.0') {
-    it.only('Skip Safari 8', () => true);
-    return;
-  }
-
   beforeAll(() => {
     browser.url('media/tracking-2-trackers.html');
 

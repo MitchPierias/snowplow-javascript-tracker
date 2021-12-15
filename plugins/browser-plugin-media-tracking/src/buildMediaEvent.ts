@@ -51,7 +51,7 @@ function getHTMLMediaElementEntities(el: HTMLAudioElement | HTMLVideoElement): M
       controls: el.controls,
       crossOrigin: el.crossOrigin,
       currentSrc: el.currentSrc,
-      defaultMuted: el.defaultMuted,
+      defaultMuted: el.defaultMuted || false,
       defaultPlaybackRate: el.defaultPlaybackRate,
       disableRemotePlayback: el.disableRemotePlayback,
       error: el.error,
